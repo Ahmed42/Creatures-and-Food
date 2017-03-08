@@ -18,6 +18,7 @@ class Creature {
         this.food_eaten = 0;
         //this.currentInterval = null;
         artist.draw_circle(this.id, this.x, this.y, this.radius);
+
     }
 
     move(x, y) {
@@ -52,14 +53,9 @@ class Creature {
                     }
                 }*/
 
-                for (var food_id in creature.world.foods) {
-                    if (!creature.world.foods.hasOwnProperty(food_id)) {
-                        //The current property is not a direct property
-                        continue;
-                    }
-
-                    if (creature.world.foods[food_id].does_exist(creature.x, creature.y)) {
-                        creature.eat(creature.world.foods[food_id]);
+                for (var i = 0; i < creature.world.foods.length; i++) {
+                    if (creature.world.foods[i].does_exist(creature.x, creature.y)) {
+                        creature.eat(creature.world.foods[i]);
                     }
                 }
 
@@ -152,38 +148,53 @@ class Food {
 class World {
     constructor(artist) {
         this.artist = artist;
-        this.creatures = {};
-        this.foods = {};
+        this.creatures = [];
+        this.foods = [];
+
+        d3.select("body")
+            .selectAll("p")
+            .data(this.creatures)
+            .enter()
+            .append("p")
+            .text(function(creature) { return "Food eaten: " + creature.food_eaten; });
     }
 
     spawn_creature(id, xi, yi) {
-        if (this.creatures.hasOwnProperty(id)) {
-            return null;
+        for(var i = 0; i < this.creatures.length; i++) {
+            if(this.creatures[i].id == id) {
+                return null;
+            }
         }
+
         var new_creature = new Creature(id, xi, yi, this);
-        this.creatures[id] = new_creature;
+        this.creatures.push(new_creature);
+
+        d3.select("body")
+            .selectAll("p")
+            .data(this.creatures)
+            .enter()
+            .append("p")
+            .text(function(creature) { return "Food eaten: " + creature.food_eaten; });
 
         return new_creature;
     }
 
     grow_food(id, xi, yi) {
-        if (this.foods.hasOwnProperty(id)) {
-            return null;
+        for(var i = 0; i < this.foods.length; i++) {
+            if(this.foods[i].id == id) {
+                return null;
+            }
         }
+
         var new_food = new Food(id, xi, yi, this);
-        this.foods[id] = new_food;
+        this.foods.push(new_food);
 
         return new_food;
     }
 
     apocalypse() {
-        for (var id in this.creatures) {
-            if (!this.creatures.hasOwnProperty(id)) {
-                //The current property is not a direct property of p
-                continue;
-            }
-
-            this.creatures[id].die();
+        for (var i = 0; i < this.creatures.length; i++) {
+            this.creatures[i].die();
         }
     }
 }

@@ -8,14 +8,20 @@ var new_world = new World(artist);
 var c1 = new_world.spawn_creature("c1", 3, 3);
 var c2 = new_world.spawn_creature("c2", 5, 5);
 
+
 var f1 = new_world.grow_food("f1", 2, 3);
 var f2 = new_world.grow_food("f2", 6, 3);
 var f3 = new_world.grow_food("f3", 2, 2);
 var f4 = new_world.grow_food("f4", 9, 7);
 var f5 = new_world.grow_food("f5", 4, 9);
 
+/*
+c1.move(2,3);
+c1.move(6,3);
+c1.move(2,2);
+*/
 
-c1.move(4,4);
+m = c1.execute_moves([[2,3], [6,3], [2,2]]);
 //moves = [[1,2], [3,4], [5,5], [10,0], [0,10]];
 //moves2 = [[0,1], [1,0], [2,0], [0,2]];
 //moves2 = [[1,2], [3,4], [5,5], [10,0], [0,10]];
