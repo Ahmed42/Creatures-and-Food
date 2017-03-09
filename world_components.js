@@ -47,12 +47,6 @@ class Creature {
                 creature.world.artist.clear(creature.id);
                 creature.world.artist.draw_circle(creature.id, creature.x, creature.y, creature.radius);
 
-                /*for (var i = 0; i < creature.world.foods.length; i++) {
-                    if (creature.world.foods[i].does_exist(creature.x, creature.y)) {
-                        creature.eat(creature.world.foods[i]);
-                    }
-                }*/
-
                 for (var i = 0; i < creature.world.foods.length; i++) {
                     if (creature.world.foods[i].does_exist(creature.x, creature.y)) {
                         creature.eat(creature.world.foods[i]);
@@ -71,6 +65,29 @@ class Creature {
     eat(food) {
         food.die();
         this.food_eaten++;
+        this.update_score();
+    }
+
+    update_score() {
+        var scores = d3.select(".scores")
+            .selectAll("p")
+            .data(this.world.creatures);
+
+            scores.text(function(creature) { return "[" + creature.id + "]Food eaten: " + creature.food_eaten; });
+
+            /*scores.enter()
+            .append("p")
+            .text(function(creature) { return "Food eaten: " + creature.food_eaten; });
+
+            scores.exit().remove();
+*/
+        /*d3.select("body")
+            .selectAll("p")
+            .data(this.world.creatures, function(creature) { return creature.food_eaten; })
+            .enter()
+            .append("p")
+            .text(function(food_eaten) { return "Food eaten: " + food_eaten; });*/
+
     }
 
     advance(delta_x, delta_y) {
@@ -151,12 +168,12 @@ class World {
         this.creatures = [];
         this.foods = [];
 
-        d3.select("body")
+        d3.select(".scores")
             .selectAll("p")
             .data(this.creatures)
             .enter()
             .append("p")
-            .text(function(creature) { return "Food eaten: " + creature.food_eaten; });
+            .text(function(creature) { return "[" + creature.id + "]Food eaten: " + creature.food_eaten; });
     }
 
     spawn_creature(id, xi, yi) {
@@ -169,12 +186,12 @@ class World {
         var new_creature = new Creature(id, xi, yi, this);
         this.creatures.push(new_creature);
 
-        d3.select("body")
+        d3.select(".scores")
             .selectAll("p")
             .data(this.creatures)
             .enter()
             .append("p")
-            .text(function(creature) { return "Food eaten: " + creature.food_eaten; });
+            .text(function(creature) { return "[" + creature.id + "]Food eaten: " + creature.food_eaten; });
 
         return new_creature;
     }
