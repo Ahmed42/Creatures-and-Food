@@ -17,7 +17,7 @@ class Creature {
         this.is_alive = true;
         this.food_eaten = 0;
         //this.currentInterval = null;
-        artist.draw_circle(this.id, this.x, this.y, this.radius);
+        this.world.artist.draw_circle(this.id, this.x, this.y, this.radius);
 
     }
 
@@ -145,11 +145,18 @@ class Food {
         //this.currentInterval = null;
         this.is_alive = true;
         this.side = 0.1;
-        artist.draw_square(this.id, this.x, this.y, this.side);
+        this.world.artist.draw_square(this.id, this.x, this.y, this.side);
     }
 
     does_exist(x, y) {
         return this.is_alive && this.almost_equal(this.x, x) && this.almost_equal(this.y, y);
+    }
+
+    regrow(x = this.x, y = this.y) {
+        this.x = x;
+        this.y = y;
+        this.world.artist.draw_square(this.id, this.x, this.y, this.side);
+        this.is_alive = true;
     }
 
     die() {
@@ -207,6 +214,12 @@ class World {
         this.foods.push(new_food);
 
         return new_food;
+    }
+
+    regrow_all_food() {
+        for(var i = 0; i < this.foods.length; i++) {
+            this.foods[i].regrow();
+        }
     }
 
     apocalypse() {
