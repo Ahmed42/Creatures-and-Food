@@ -27,7 +27,7 @@ def getInitialPopulation():
 def getPopulationOffsprings():
     
     json = flask.request.get_json()
-    print(json, file=sys.stderr)
+    #print(json, file=sys.stderr)
     population = json['population']
     scores = json['scores']
     offsprings = population_manager.get_population_offsprings(population, scores)

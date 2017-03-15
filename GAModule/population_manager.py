@@ -11,7 +11,7 @@ creator.create("Individual", list, fitness=creator.FitnessMax)
     # MIN_VAL the min x,y and similar to MAX_VAL
     # MIN_VAL, MAX_VAL, and IND_SIZE should all be paramterized 
 
-IND_SIZE = 30
+IND_SIZE = 10
 MIN_VAL = 0
 MAX_VAL = 10
 toolbox = base.Toolbox()

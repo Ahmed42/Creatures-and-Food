@@ -218,7 +218,9 @@ class World {
 
     regrow_all_food() {
         for(var i = 0; i < this.foods.length; i++) {
-            this.foods[i].regrow();
+            if(!this.foods[i].is_alive) {
+                this.foods[i].regrow();
+            }
         }
     }
 

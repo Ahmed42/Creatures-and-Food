@@ -16,7 +16,7 @@ var f3 = new_world.grow_food("f3", 2, 2);
 var f4 = new_world.grow_food("f4", 9, 7);
 var f5 = new_world.grow_food("f5", 4, 9);
 */
-var GEN_NUM = 10;
+var GEN_NUM = 30;
 
 // Get fresh population
 $.ajax({
@@ -24,26 +24,21 @@ $.ajax({
     url: "http://127.0.0.1:5000/getInitialPopulation",
     success: function (population) {
         var new_world = generate_new_world(10);
-        var scores = execute_lifecycle(population, new_world);
-        
-        var new_pop = population;
-        for(var i = 0; i < GEN_NUM; i++) {
+        var scores_promise = execute_lifecycle(population, new_world, 0);
+        var g_index = 1;
+
+        for (var gen_index = 1; gen_index < GEN_NUM; gen_index++) {
             // For each generation, get new offsprings
-            $.ajax({
+            scores_promise = scores_promise.then((pops_scores) => $.ajax({
                 type: "POST",
                 url: "http://127.0.0.1:5000/getPopulationOffsprings",
-                async: false, // might want to remove this and find a different way
-                data: JSON.stringify({"population" : new_pop, "scores" : scores}),
+                data: JSON.stringify({ "population": pops_scores[0], "scores": pops_scores[1] }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success : function (population) {
-                    new_pop = population;
-                    scores = execute_lifecycle(new_pop, new_world);                  
-                },
-
-                error : function(population) {
-                    console.log(scores);
-                }
+            }))
+            .then(function (new_pop) {
+                g_index++;
+                return execute_lifecycle(new_pop, new_world, g_index);
             });
         }
     }
@@ -56,7 +51,7 @@ function generate_new_world(food_amount) {
 
     var artist = new Artist(svg_width, svg_height, 0, 10, 0, 10);
     var new_world = new World(artist);
-    for(var i = 0; i < food_amount; i++) {
+    for (var i = 0; i < food_amount; i++) {
         var xi = getRandomIntInclusive(0, 10);
         var yi = getRandomIntInclusive(0, 10);
         new_world.grow_food("food" + i, xi, yi);
@@ -67,12 +62,14 @@ function generate_new_world(food_amount) {
 
 
 // population is a 1D array
-function execute_lifecycle(population, new_world) {
+function execute_lifecycle(population, new_world, generation_index) {
+    new_world.apocalypse();
+    new_world.regrow_all_food();
     creatures = [];
     grouped_population = [];
     for (var i = 0; i < population.length; i++) {
         grouped_population.push(group_points(population[i]));
-        creatures.push(new_world.spawn_creature("c" + i, grouped_population[i][0][0], grouped_population[i][0][1]));
+        creatures.push(new_world.spawn_creature("g" + generation_index + "i" + i, grouped_population[i][0][0], grouped_population[i][0][1]));
     }
 
     promises = [];
@@ -80,15 +77,13 @@ function execute_lifecycle(population, new_world) {
         promises.push(creatures[i].execute_moves(grouped_population[i]));
     }
 
-    Promise.all(promises).then();
-
-    scores = [];
-        for(var i = 0; i < creatures.length; i++) {
+    var scores = [];
+    return Promise.all(promises).then(() => {
+        for (var i = 0; i < creatures.length; i++) {
             scores.push(creatures[i].food_eaten);
         }
-
-
-    return scores;
+        return Promise.resolve([population, scores]);
+    });
 }
 
 //[1,2,3,4] => [[1,2], [3,4]]
@@ -107,9 +102,9 @@ function flatten_points(points) {
 }
 
 function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 //m = c1.execute_moves([[2,3], [6,3], [2,2]]);
 
