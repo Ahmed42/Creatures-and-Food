@@ -18,24 +18,31 @@ var f5 = new_world.grow_food("f5", 4, 9);
 */
 var GEN_NUM = 10;
 
-
+// Get fresh population
 $.ajax({
     type: "GET",
-    url: "localhost/getInitialPopulation",
+    url: "http://127.0.0.1:5000/getInitialPopulation",
     success: function (population) {
         var new_world = generate_new_world(10);
         var scores = execute_lifecycle(population, new_world);
         
         var new_pop = population;
         for(var i = 0; i < GEN_NUM; i++) {
+            // For each generation, get new offsprings
             $.ajax({
-                type: "GET",
-                url: "localhost/getPopulationOffsprings",
+                type: "POST",
+                url: "http://127.0.0.1:5000/getPopulationOffsprings",
                 async: false, // might want to remove this and find a different way
-                data: {"population" : new_pop, "scores" : scores},
+                data: JSON.stringify({"population" : new_pop, "scores" : scores}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
                 success : function (population) {
                     new_pop = population;
                     scores = execute_lifecycle(new_pop, new_world);                  
+                },
+
+                error : function(population) {
+                    console.log(scores);
                 }
             });
         }
@@ -54,6 +61,8 @@ function generate_new_world(food_amount) {
         var yi = getRandomIntInclusive(0, 10);
         new_world.grow_food("food" + i, xi, yi);
     }
+
+    return new_world;
 }
 
 
