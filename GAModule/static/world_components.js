@@ -69,11 +69,13 @@ class Creature {
     }
 
     update_score() {
+        d3.select(".scores ." + this.id).html(this.food_eaten);
+/*
         var scores = d3.select(".scores")
             .selectAll("p")
             .data(this.world.creatures);
 
-            scores.text(function(creature) { return "[" + creature.id + "]Food eaten: " + creature.food_eaten; });
+            scores.text(function(creature) { return "[" + creature.id + "]Food eaten: " + creature.food_eaten; });*/
 
             /*scores.enter()
             .append("p")
@@ -174,13 +176,14 @@ class World {
         this.artist = artist;
         this.creatures = [];
         this.foods = [];
-
+/*
         d3.select(".scores")
-            .selectAll("p")
+            .selectAll("span")
             .data(this.creatures)
             .enter()
             .append("p")
             .text(function(creature) { return "[" + creature.id + "]Food eaten: " + creature.food_eaten; });
+            */
     }
 
     spawn_creature(id, xi, yi) {
@@ -193,13 +196,15 @@ class World {
         var new_creature = new Creature(id, xi, yi, this);
         this.creatures.push(new_creature);
 
+        /*d3.select(".scores table")
+
         d3.select(".scores")
-            .selectAll("p")
+            .selectAll("span")
             .data(this.creatures)
             .enter()
             .append("p")
             .text(function(creature) { return "[" + creature.id + "]Food eaten: " + creature.food_eaten; });
-
+*/
         return new_creature;
     }
 

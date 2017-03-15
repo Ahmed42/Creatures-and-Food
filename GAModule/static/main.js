@@ -25,7 +25,7 @@ $.ajax({
     success: function (population) {
         var new_world = generate_new_world(10);
         var scores_promise = execute_lifecycle(population, new_world, 0);
-        var g_index = 1;
+        var g_index = 0;
 
         for (var gen_index = 1; gen_index < GEN_NUM; gen_index++) {
             // For each generation, get new offsprings
@@ -63,13 +63,37 @@ function generate_new_world(food_amount) {
 
 // population is a 1D array
 function execute_lifecycle(population, new_world, generation_index) {
+    // prepare the world
     new_world.apocalypse();
     new_world.regrow_all_food();
+
+    // prepare scores table
+    var table = d3.select(".scores")
+        .append("table")
+
+    var thead = table.append("thead")
+    var first_tr = thead.append("tr")
+    var second_tr = thead.append("tr")
+
+    first_tr.append("th").html("Gen " + generation_index);
+    second_tr.append("th").html("Name")
+    second_tr.append("th").html("Score")
+    
+    var tbody = table.append("tbody")
+        .attr("class", generation_index)
+        .attr("colspan", 2);
+    
     creatures = [];
     grouped_population = [];
     for (var i = 0; i < population.length; i++) {
         grouped_population.push(group_points(population[i]));
-        creatures.push(new_world.spawn_creature("g" + generation_index + "i" + i, grouped_population[i][0][0], grouped_population[i][0][1]));
+        var creature_name = "g" + generation_index + "i" + i;
+        creatures.push(new_world.spawn_creature(creature_name, grouped_population[i][0][0], grouped_population[i][0][1]));
+        
+        // add name and score cells
+        var tr = tbody.append("tr");
+        tr.append("td").html(creature_name);
+        tr.append("td").attr("class", creature_name)
     }
 
     promises = [];
