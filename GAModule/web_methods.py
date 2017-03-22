@@ -18,9 +18,9 @@ def main():
     return flask.render_template("front/index.html")
     #return "hello";
 
-@app.route('/getInitialPopulation', methods = ['GET'])
-def getInitialPopulation():
-    pop = population_manager.get_initial_population()
+@app.route('/getInitialPopulation/<pop_size>', methods = ['GET'])
+def getInitialPopulation(pop_size):
+    pop = population_manager.get_initial_population(int(pop_size))
     return flask.jsonify(pop)
 
 @app.route('/getPopulationOffsprings', methods = ['POST'])

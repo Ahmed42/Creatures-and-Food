@@ -11,9 +11,9 @@ creator.create("Individual", list, fitness=creator.FitnessMax)
     # MIN_VAL the min x,y and similar to MAX_VAL
     # MIN_VAL, MAX_VAL, and IND_SIZE should all be paramterized 
 
-IND_SIZE = 10
+IND_SIZE = 20
 MIN_VAL = 0
-MAX_VAL = 10
+MAX_VAL = 20
 toolbox = base.Toolbox()
 
 # fresh population
@@ -36,31 +36,37 @@ toolbox.register("crossover", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
 
     # Total population size
-POP_SIZE = 10
+#POP_SIZE = 15
     
     # Number of parents to be selected
-PARENS_NUM = int(POP_SIZE/2)
+#PARENS_NUM = int(POP_SIZE/2)
     
     # Number of clones per parent
-CHILD_PER_PAREN = int(POP_SIZE/PARENS_NUM)
+
     
     # Number of generations
-GENS_NUM = 50
+#GENS_NUM = 50
 
-def get_initial_population():
+def get_initial_population(POP_SIZE):
     pop = toolbox.new_population(n=POP_SIZE)
     return pop
 
 def get_population_offsprings(population, scores):
     # 2. evaluate
+    POP_SIZE = len(population)
+    #print("SIZE AT START: " + str(POP_SIZE), file=sys.stderr)
     pop = []
     for individual_list, fitness in zip(population, scores):
         individual = creator.Individual(individual_list)
         individual.fitness.values = (fitness,)
         pop.append(individual)
 
+    PARENS_NUM = int(POP_SIZE/2)
+    #print("NUM OF PARENS: " + str(PARENS_NUM), file=sys.stderr)
+    CHILD_PER_PAREN = int(POP_SIZE/PARENS_NUM)
     #print(pop, file=sys.stderr)
     # 3. Select M best
+    #print("NUM OF CHILDREN PER PAREN: " + str(CHILD_PER_PAREN), file=sys.stderr)
     parents = toolbox.select(pop, PARENS_NUM)
 
     # 4. Make N clones
@@ -68,6 +74,7 @@ def get_population_offsprings(population, scores):
     for cloning_cycle in range(CHILD_PER_PAREN):
         offsprings += map(toolbox.clone, parents)
     
+    #print("NUM OF OFFSPRINGS: " + str(len(offsprings)), file=sys.stderr)
     #print("Debug!", file=sys.stderr)
     #print(offsprings, file=sys.stderr)
     #print(offsprings)
@@ -81,7 +88,8 @@ def get_population_offsprings(population, scores):
     # 6. Mutate
     for mutant in offsprings:
         toolbox.mutate(mutant)
-        
+    
+    #print("SIZE IN THE END: " + str(len(offsprings)), file=sys.stderr)
     # 7. Population = mutants
     #pop[:] = offsprings
     return offsprings

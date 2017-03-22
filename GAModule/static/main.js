@@ -16,14 +16,15 @@ var f3 = new_world.grow_food("f3", 2, 2);
 var f4 = new_world.grow_food("f4", 9, 7);
 var f5 = new_world.grow_food("f5", 4, 9);
 */
-var GEN_NUM = 30;
+var GEN_NUM = 100;
+var POP_SIZE = 14;
 
 // Get fresh population
 $.ajax({
     type: "GET",
-    url: "http://127.0.0.1:5000/getInitialPopulation",
+    url: "http://127.0.0.1:5000/getInitialPopulation/" + POP_SIZE,
     success: function (population) {
-        var new_world = generate_new_world(10);
+        var new_world = generate_new_world(60);
         var scores_promise = execute_lifecycle(population, new_world, 0);
         var g_index = 0;
 
@@ -36,26 +37,38 @@ $.ajax({
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
             }))
-            .then(function (new_pop) {
-                g_index++;
-                return execute_lifecycle(new_pop, new_world, g_index);
-            });
+                .then(function (new_pop) {
+                    g_index++;
+                    return execute_lifecycle(new_pop, new_world, g_index);
+                });
         }
     }
 });
 
 // Generate world with food
 function generate_new_world(food_amount) {
-    var svg_width = 500;
-    var svg_height = 500;
+    var svg_width = 1000;
+    var svg_height = 1000;
 
-    var artist = new Artist(svg_width, svg_height, 0, 10, 0, 10);
+    var artist = new Artist(svg_width, svg_height, 0, 20, 0, 20);
     var new_world = new World(artist);
-    for (var i = 0; i < food_amount; i++) {
-        var xi = getRandomIntInclusive(0, 10);
-        var yi = getRandomIntInclusive(0, 10);
-        new_world.grow_food("food" + i, xi, yi);
+    var xi = 1;
+    var yi = 1;
+    for (var i = 0; i < food_amount/4; i++) {
+        /*var xi = getRandomIntInclusive(0, 20);
+        var yi = getRandomIntInclusive(0, 20);*/
+
+        // Horizontal line at the top
+        new_world.grow_food("food" + i + "p1", xi + i , yi);
+        // Horizontal Line
+        new_world.grow_food("food" + i + "p2", xi + i, yi + 18);
+        // Vertical Line
+        new_world.grow_food("food" + i + "p3", xi , yi + i);
+        // Vertical Line
+        new_world.grow_food("food" + i + "p4", xi + 18, yi + i);
     }
+
+    
 
     return new_world;
 }
@@ -78,18 +91,18 @@ function execute_lifecycle(population, new_world, generation_index) {
     first_tr.append("th").html("Gen " + generation_index);
     second_tr.append("th").html("Name")
     second_tr.append("th").html("Score")
-    
+
     var tbody = table.append("tbody")
         .attr("class", generation_index)
         .attr("colspan", 2);
-    
+
     creatures = [];
     grouped_population = [];
     for (var i = 0; i < population.length; i++) {
         grouped_population.push(group_points(population[i]));
         var creature_name = "g" + generation_index + "i" + i;
         creatures.push(new_world.spawn_creature(creature_name, grouped_population[i][0][0], grouped_population[i][0][1]));
-        
+
         // add name and score cells
         var tr = tbody.append("tr");
         tr.append("td").html(creature_name);
@@ -103,9 +116,16 @@ function execute_lifecycle(population, new_world, generation_index) {
 
     var scores = [];
     return Promise.all(promises).then(() => {
+        var total_score = 0;
         for (var i = 0; i < creatures.length; i++) {
             scores.push(creatures[i].food_eaten);
+            total_score += creatures[i].food_eaten;
         }
+
+        var tr = tbody.append("tr");
+        tr.append("td").html("TOTAL SCORE");
+        tr.append("td").attr("class", "TOTAL_SCORE").html(total_score);
+        //console.log(population.length);
         return Promise.resolve([population, scores]);
     });
 }
