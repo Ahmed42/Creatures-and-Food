@@ -8,12 +8,10 @@
     
     <!--<script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
-    <script src="static/drawing_primitives.js">
 
-    </script>
-    <script src="static/world_components.js">
-
-    </script>
+    <script src="static/drawing_primitives.js"></script>
+    <script src="static/world_components.js"></script>
+    <script src="static/main.js"></script>
 
     <style>
         /*.scores {
@@ -21,33 +19,52 @@
         }*/
         
         table {
-            float: left;
+            /*float: left;*/
             margin: 2px;
             border: solid 2px black;
+            border-collapse: collapse;
         }
         table td, 
         table th {
             border: solid 1px black;
-            
+            padding: 5px;
         }
+
+        /*div, svg {
+            float: left;
+        }*/
+
     </style>
 </head>
 
 <body>
+    <svg></svg>
 
-    <svg>
+    <div class="scores"></div>
 
-    </svg>
-    <div class="scores">
-        <!--<table>
-    <tbody>
+    <div>
+        <label> Number of creatures</label>
+        <input id="creatures_no" type="text">
 
-    </tbody>
-</table> -->
+        <label> Number of movement per creature </label>
+        <input id="moves_no" type="text">
+
+        <label> Food amount </label>
+        <input id="foods_no" type="text">
+
+        <label> Food distribution </label>
+        <input id="food_dist" type="text">
+
+        <label> Number of generations</label>
+        <input id="gens_no" type="text">
+
+        <label> Width and height (100 - 1000)</label>
+        <input id="width_height" type="text">
+
+        <button id="start_sim_btn"> START NEW SIMULATION!</button>
     </div>
-    <script src="static/main.js">
 
-    </script>
+    
 </body>
 
 </html>

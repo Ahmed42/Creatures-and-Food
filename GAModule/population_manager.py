@@ -2,56 +2,39 @@ from deap import creator, base, tools, algorithms
 import random
 import sys
 
-#def initialize_toolbox():
-creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMax)
+def initialize_toolbox(individual_size, min_xy_val, max_xy_val):
+    creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+    creator.create("Individual", list, fitness=creator.FitnessMax)
     
     # number of an individual attributes
     # number of points (= number of moves * 2)
     # MIN_VAL the min x,y and similar to MAX_VAL
     # MIN_VAL, MAX_VAL, and IND_SIZE should all be paramterized 
-
-IND_SIZE = 20
-MIN_VAL = 0
-MAX_VAL = 20
-toolbox = base.Toolbox()
-
-# fresh population
-toolbox.register("rand_attribute", random.randint, MIN_VAL, MAX_VAL)
-toolbox.register("new_individual", tools.initRepeat, creator.Individual, toolbox.rand_attribute, n=IND_SIZE)
-toolbox.register("new_population", tools.initRepeat, list, toolbox.new_individual)
-
-
-# received population
-#toolbox.register("individual", (individual_list) => individual_list, creator.Individual)
-#toolbox.register("population", (), )
-#def evaluate(individual):
-#    return sum(individual),
-        
-#toolbox.register("evaluate", evaluate)
-
-# selection and mutation
-toolbox.register("select", tools.selRoulette)
-toolbox.register("crossover", tools.cxTwoPoint)
-toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
-
-    # Total population size
-#POP_SIZE = 15
     
-    # Number of parents to be selected
-#PARENS_NUM = int(POP_SIZE/2)
+    IND_SIZE = individual_size#20
+    MIN_VAL = min_xy_val#0
+    MAX_VAL = max_xy_val#20
+    toolbox = base.Toolbox()
     
-    # Number of clones per parent
-
+    # fresh population
+    toolbox.register("rand_attribute", random.randint, MIN_VAL, MAX_VAL)
+    toolbox.register("new_individual", tools.initRepeat, creator.Individual, toolbox.rand_attribute, n=IND_SIZE)
+    toolbox.register("new_population", tools.initRepeat, list, toolbox.new_individual)
     
-    # Number of generations
-#GENS_NUM = 50
+    # selection and mutation
+    toolbox.register("select", tools.selRoulette)
+    toolbox.register("crossover", tools.cxTwoPoint)
+    toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
 
-def get_initial_population(POP_SIZE):
-    pop = toolbox.new_population(n=POP_SIZE)
+    return (creator,toolbox)
+
+def get_initial_population(pop_size, individual_size, min_xy_val, max_xy_val):
+    creator, toolbox = initialize_toolbox(individual_size, min_xy_val, max_xy_val);
+    pop = toolbox.new_population(n=pop_size)
     return pop
 
-def get_population_offsprings(population, scores):
+def get_population_offsprings(population, scores, min_xy_val, max_xy_val):
+    creator, toolbox = initialize_toolbox(len(population[0]), min_xy_val, max_xy_val);
     # 2. evaluate
     POP_SIZE = len(population)
     #print("SIZE AT START: " + str(POP_SIZE), file=sys.stderr)

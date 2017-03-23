@@ -12,7 +12,7 @@ class Creature {
         this.effective_speed = 10; // actual distance traversed in a s
         this.delay = 1; // time between each frame and another
         this.speed = (this.effective_speed * this.delay) / 1000.0; // amount increment/decremented per delay
-        this.epsilon = 0.1; // precision
+        this.epsilon = 0.5; // precision
         this.radius = 0.15;
         this.is_alive = true;
         this.food_eaten = 0;
