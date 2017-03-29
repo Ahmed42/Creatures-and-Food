@@ -20,7 +20,7 @@ def main():
 
 @app.route('/getInitialPopulation/<pop_size>/<individual_size>/<min_xy_val>/<max_xy_val>', methods = ['GET'])
 def getInitialPopulation(pop_size, individual_size, min_xy_val, max_xy_val):
-    pop = population_manager.get_initial_population(int(pop_size))
+    pop = population_manager.get_initial_population(int(pop_size), individual_size, min_xy_val, max_xy_val)
     return flask.jsonify(pop)
 
 @app.route('/getPopulationOffsprings', methods = ['POST'])

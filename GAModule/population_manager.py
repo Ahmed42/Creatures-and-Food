@@ -29,8 +29,8 @@ def initialize_toolbox(individual_size, min_xy_val, max_xy_val):
     return (creator,toolbox)
 
 def get_initial_population(pop_size, individual_size, min_xy_val, max_xy_val):
-    creator, toolbox = initialize_toolbox(individual_size, min_xy_val, max_xy_val);
-    pop = toolbox.new_population(n=pop_size)
+    creator, toolbox = initialize_toolbox(int(individual_size), int(min_xy_val), int(max_xy_val));
+    pop = toolbox.new_population(n=int(pop_size))
     return pop
 
 def get_population_offsprings(population, scores, min_xy_val, max_xy_val):

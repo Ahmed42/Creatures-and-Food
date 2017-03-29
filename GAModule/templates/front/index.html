@@ -2,10 +2,14 @@
 
 <head>
     <title> GA </title>
-    
-    <script src="static/node_modules/d3/build/d3.min.js"> </script>
-    <script src="static/node_modules/jquery/dist/jquery.min.js"> </script>
-    
+
+    <script src="static/node_modules/d3/build/d3.min.js">
+
+    </script>
+    <script src="static/node_modules/jquery/dist/jquery.min.js">
+
+    </script>
+
     <!--<script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
 
@@ -14,57 +18,81 @@
     <script src="static/main.js"></script>
 
     <style>
-        /*.scores {
-            text-align: center;
-        }*/
-        
+        .scores {
+            /*text-align: center;*/
+            display: block;
+        }
+
+        svg {
+            display: inline-block;
+        }
         table {
-            /*float: left;*/
+            float: left;
             margin: 2px;
             border: solid 2px black;
             border-collapse: collapse;
         }
-        table td, 
+        
+        table td,
         table th {
             border: solid 1px black;
             padding: 5px;
         }
 
+        .form {
+            /*float: left;*/
+            border: solid 2px black;
+            display: inline-block;
+            vertical-align: top;
+        }
         /*div, svg {
             float: left;
         }*/
-
     </style>
 </head>
 
 <body>
     <svg></svg>
 
-    <div class="scores"></div>
+    <div class="form">
+        <div>
+            <label> Number of creatures</label>
+            <input id="creatures_no" type="text" value="7">
+        </div>
 
-    <div>
-        <label> Number of creatures</label>
-        <input id="creatures_no" type="text">
+        <div>
+            <label> Number of movement per creature </label>
+            <input id="moves_no" type="text" value="5">
+        </div>
 
-        <label> Number of movement per creature </label>
-        <input id="moves_no" type="text">
+        <div>
+            <label> Food amount </label>
+            <input id="foods_no" type="text" value="20">
+        </div>
 
-        <label> Food amount </label>
-        <input id="foods_no" type="text">
+        <div>
+            <label> Food distribution </label>
+            <input id="food_dist" type="text">
+        </div>
 
-        <label> Food distribution </label>
-        <input id="food_dist" type="text">
+        <div>
+            <label> Number of generations</label>
+            <input id="gens_no" type="text" value="5">
+        </div>
 
-        <label> Number of generations</label>
-        <input id="gens_no" type="text">
-
-        <label> Width and height (100 - 1000)</label>
-        <input id="width_height" type="text">
+        <div>
+            <label> Width and height (100 - 1000)</label>
+            <input id="width_height" type="text" value="250">
+        </div>
 
         <button id="start_sim_btn"> START NEW SIMULATION!</button>
     </div>
 
+    <div class="scores"></div>
+
     
+
+
 </body>
 
 </html>

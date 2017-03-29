@@ -25,12 +25,16 @@ $('document').ready(function() {
 });
 
 function start_new_simulation() {
-    var POP_SIZE = $('#creatures_no').text();
-    var POINTS_NO = parseInt($('#moves_no').text()) * 2;
-    var FOODS_NO = parseInt($('#foods_no').text());
-    var FOOD_DIST = $('#food_dist').text();
-    var GEN_NUM = parseInt($('#gens_no').text());
-    var WIDTH = parseInt($('#width_height').text());
+    // Reset previous simulation
+    $('svg').empty();
+    $('.scores').empty();
+
+    var POP_SIZE = $('#creatures_no').val();
+    var POINTS_NO = parseInt($('#moves_no').val()) * 2;
+    var FOODS_NO = parseInt($('#foods_no').val());
+    var FOOD_DIST = $('#food_dist').val();
+    var GEN_NUM = parseInt($('#gens_no').val());
+    var WIDTH = parseInt($('#width_height').val());
     var HEIGHT = WIDTH;
 
     //var GEN_NUM = 100;
@@ -40,7 +44,7 @@ function start_new_simulation() {
 $.ajax({
     type: "GET",
     // This better be coded in a query string
-    url: "http://127.0.0.1:5000/getInitialPopulation/" + POP_SIZE,
+    url: "http://127.0.0.1:5000/getInitialPopulation/" + POP_SIZE +"/" + POINTS_NO + "/" + MIN_XY + "/" + MAX_XY,
     success: function (population) {
         var new_world = generate_new_world(FOODS_NO, WIDTH, HEIGHT);
         var scores_promise = execute_lifecycle(population, new_world, 0);
@@ -174,7 +178,7 @@ function getRandomIntInclusive(min, max) {
 
 
 
-start_new_simulation();
+//start_new_simulation();
 //m = c1.execute_moves([[2,3], [6,3], [2,2]]);
 
 //m.then(() => new_world.apocalypse());
