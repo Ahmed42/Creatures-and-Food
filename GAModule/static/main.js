@@ -20,12 +20,18 @@ var f5 = new_world.grow_food("f5", 4, 9);
 var MIN_XY = 0;
 var MAX_XY = 20;
 
-$('document').ready(function() {
+var promises_cancel_tokens = [];
+
+$('document').ready(function () {
     $('#start_sim_btn').on('click', start_new_simulation);
 });
 
 function start_new_simulation() {
     // Reset previous simulation
+    for(var i = 0; i < promises_cancel_tokens.length; i++) {
+        promises_cancel_tokens[i].cancel();
+    }
+
     $('svg').empty();
     $('.scores').empty();
 
@@ -37,35 +43,36 @@ function start_new_simulation() {
     var WIDTH = parseInt($('#width_height').val());
     var HEIGHT = WIDTH;
 
+    
     //var GEN_NUM = 100;
-//var POP_SIZE = 14;
+    //var POP_SIZE = 14;
 
-// Get fresh population
-$.ajax({
-    type: "GET",
-    // This better be coded in a query string
-    url: "http://127.0.0.1:5000/getInitialPopulation/" + POP_SIZE +"/" + POINTS_NO + "/" + MIN_XY + "/" + MAX_XY,
-    success: function (population) {
-        var new_world = generate_new_world(FOODS_NO, WIDTH, HEIGHT);
-        var scores_promise = execute_lifecycle(population, new_world, 0);
-        var g_index = 0;
+    // Get fresh population
+    $.ajax({
+        type: "GET",
+        // This better be coded in a query string
+        url: "http://127.0.0.1:5000/getInitialPopulation/" + POP_SIZE + "/" + POINTS_NO + "/" + MIN_XY + "/" + MAX_XY,
+        success: function (population) {
+            var new_world = generate_new_world(FOODS_NO, WIDTH, HEIGHT);
+            var scores_promise = execute_lifecycle(population, new_world, 0);
+            var g_index = 0;
 
-        for (var gen_index = 1; gen_index < GEN_NUM; gen_index++) {
-            // For each generation, get new offsprings
-            scores_promise = scores_promise.then((pops_scores) => $.ajax({
-                type: "POST",
-                url: "http://127.0.0.1:5000/getPopulationOffsprings",
-                data: JSON.stringify({ "population": pops_scores[0], "scores": pops_scores[1], "min_xy_val" : MIN_XY, "max_xy_val": MAX_XY }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-            }))
-                .then(function (new_pop) {
-                    g_index++;
-                    return execute_lifecycle(new_pop, new_world, g_index);
-                });
+            for (var gen_index = 1; gen_index < GEN_NUM; gen_index++) {
+                // For each generation, get new offsprings
+                scores_promise = scores_promise.then((pops_scores) => $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1:5000/getPopulationOffsprings",
+                    data: JSON.stringify({ "population": pops_scores[0], "scores": pops_scores[1], "min_xy_val": MIN_XY, "max_xy_val": MAX_XY }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                }))
+                    .then(function (new_pop) {
+                        g_index++;
+                        return execute_lifecycle(new_pop, new_world, g_index);
+                    });
+            }
         }
-    }
-});
+    });
 }
 
 
@@ -78,21 +85,21 @@ function generate_new_world(food_amount, width, height) {
     var new_world = new World(artist);
     var xi = 1;
     var yi = 1;
-    for (var i = 0; i < food_amount/4; i++) {
+    for (var i = 0; i < food_amount / 4; i++) {
         /*var xi = getRandomIntInclusive(0, 20);
         var yi = getRandomIntInclusive(0, 20);*/
 
         // Horizontal line at the top
-        new_world.grow_food("food" + i + "p1", xi + i , yi);
+        new_world.grow_food("food" + i + "p1", xi + i, yi);
         // Horizontal Line
         new_world.grow_food("food" + i + "p2", xi + i, yi + 18);
         // Vertical Line
-        new_world.grow_food("food" + i + "p3", xi , yi + i);
+        new_world.grow_food("food" + i + "p3", xi, yi + i);
         // Vertical Line
         new_world.grow_food("food" + i + "p4", xi + 18, yi + i);
     }
 
-    
+
 
     return new_world;
 }
@@ -118,7 +125,7 @@ function execute_lifecycle(population, new_world, generation_index) {
 
     var tbody = table.append("tbody")
         .attr("class", generation_index);
-        
+
 
     creatures = [];
     grouped_population = [];

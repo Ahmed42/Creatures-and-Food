@@ -25,11 +25,15 @@ class Creature {
         /*var move_promise = new Promise(function(resolve, reject) {
             resolve();
         });*/
-
+        
+        var cancel_token = {};
+        promises_cancel_tokens.push(cancel_token);
         var self = this;
         return new Promise(function (resolve, reject) {
 
             var interval_id = setInterval(function (creature, x, y) {
+                cancel_token.cancel = function() { reject(); }
+
                 if (creature.almost_equal(creature.x, x) && creature.almost_equal(creature.y, y)) {
                     clearInterval(interval_id);
                     resolve();
