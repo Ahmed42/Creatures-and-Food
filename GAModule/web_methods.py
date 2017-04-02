@@ -20,7 +20,7 @@ def main():
 
 @app.route('/getInitialPopulation/<pop_size>/<individual_size>/<min_xy_val>/<max_xy_val>', methods = ['GET'])
 def getInitialPopulation(pop_size, individual_size, min_xy_val, max_xy_val):
-    pop = population_manager.get_initial_population(int(pop_size), individual_size, min_xy_val, max_xy_val)
+    pop = GAModule.population_manager.get_initial_population(int(pop_size), individual_size, min_xy_val, max_xy_val)
     return flask.jsonify(pop)
 
 @app.route('/getPopulationOffsprings', methods = ['POST'])
@@ -33,7 +33,7 @@ def getPopulationOffsprings():
     min_xy_val = json['min_xy_val']
     max_xy_val = json['max_xy_val']
 
-    offsprings = population_manager.get_population_offsprings(population, scores, min_xy_val, max_xy_val)
+    offsprings = GAModule.population_manager.get_population_offsprings(population, scores, min_xy_val, max_xy_val)
     return flask.jsonify(offsprings)
 
 if __name__ == "__main__":
