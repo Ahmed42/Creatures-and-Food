@@ -1,5 +1,5 @@
 import flask
-import GAModule.population_manager
+import population_manager
 import sys
 app = flask.Flask(__name__)
 app.config.from_object(__name__)
