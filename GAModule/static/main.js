@@ -51,7 +51,7 @@ function start_new_simulation() {
     $.ajax({
         type: "GET",
         // This better be coded in a query string
-        url: "http://127.0.0.1:5000/getInitialPopulation/" + POP_SIZE + "/" + POINTS_NO + "/" + MIN_XY + "/" + MAX_XY,
+        url: "/getInitialPopulation/" + POP_SIZE + "/" + POINTS_NO + "/" + MIN_XY + "/" + MAX_XY,
         success: function (population) {
             var new_world = generate_new_world(FOODS_NO, WIDTH, HEIGHT);
             var scores_promise = execute_lifecycle(population, new_world, 0);
@@ -61,7 +61,7 @@ function start_new_simulation() {
                 // For each generation, get new offsprings
                 scores_promise = scores_promise.then((pops_scores) => $.ajax({
                     type: "POST",
-                    url: "http://127.0.0.1:5000/getPopulationOffsprings",
+                    url: "/getPopulationOffsprings",
                     data: JSON.stringify({ "population": pops_scores[0], "scores": pops_scores[1], "min_xy_val": MIN_XY, "max_xy_val": MAX_XY }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
